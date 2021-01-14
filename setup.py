@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 
 try:
-    with open(os.path.join(os.path.dirname(__file__), 'README.rst'), encoding='utf-8') as f:
+    with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
 except:
     long_description = ''
@@ -25,13 +25,13 @@ cmdclass = {
 
 setup(
     name='pretix-attestation-placeholder-plugin',
-    version='0.1',
+    version='0.1.0',
     description='Pretix Ethereum Plugin Developers',
     long_description=long_description,
     url='https://github.com/efdevcon/pretix-attestation-placeholder-plugin',
     author='Pretix Ethereum Plugin Developers',
     author_email='Your email',
-    license='Apache',
+    license='MIT License',
 
     install_requires=[
         "pretix>=3.8.0",
