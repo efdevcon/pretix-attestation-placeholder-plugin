@@ -30,7 +30,7 @@ setup(
     long_description=long_description,
     url='https://github.com/efdevcon/pretix-attestation-placeholder-plugin',
     author='Pretix Ethereum Plugin Developers',
-    author_email='Your email',
+    author_email='ticketing@devcon.org',
     license='MIT License',
 
     install_requires=[
