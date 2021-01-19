@@ -1,0 +1,3 @@
+recursive-include pretix_attestation_plugin/static *
+recursive-include pretix_attestation_plugin/templates *
+recursive-include pretix_attestation_plugin/locale *
