@@ -1,3 +1,3 @@
-def placeholder_test():
+def test_placeholder():
     # Remove this test file after adding actual tests
-    pass
+    return 0
