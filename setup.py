@@ -22,6 +22,25 @@ cmdclass = {
     'build': CustomBuild
 }
 
+extras_require = {
+    'test': [
+        'pytest>=5.1,<6',
+        'pytest-django>=3.5,<4',
+    ],
+    'lint': [
+        'flake8>=3.7,<4',
+        'mypy==0.720',
+    ],
+    'dev': [
+        'tox>=3.14.5,<4',
+    ],
+}
+
+extras_require['dev'] = (
+    extras_require['dev']
+    + extras_require['test']
+    + extras_require['lint']
+)
 
 setup(
     name='pretix-attestation-placeholder-plugin',
@@ -35,7 +54,10 @@ setup(
 
     install_requires=[
         "pretix>=3.8.0",
+        "urllib3<1.26.0",
     ],
+    python_requires='>=3.6, <4',
+    extras_require=extras_require,
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
     cmdclass=cmdclass,
