@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 try:
     with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
-except:
+except FileNotFoundError:
     long_description = ''
 
 
