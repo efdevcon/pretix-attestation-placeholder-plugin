@@ -2,7 +2,6 @@
 from django.dispatch import receiver
 
 from pretix.base.signals import register_mail_placeholders
-from pretix.base.email import SimpleFunctionalMailTextPlaceholder
 
 
 @receiver(register_mail_placeholders, dispatch_uid="placeholder_custom")
