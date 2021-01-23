@@ -18,7 +18,7 @@ class PluginApp(PluginConfig):
         description = gettext_lazy('Pretix Ethereum Plugin Developers')
         visible = True
         version = __version__
-        category = 'PAYMENT'
+        category = 'Other'
         compatibility = "pretix>=3.8.0"
 
     def ready(self):
