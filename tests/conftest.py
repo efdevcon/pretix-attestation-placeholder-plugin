@@ -2,12 +2,10 @@ import pytest
 import datetime
 import contextlib
 import pretix
-import inspect
 
 from packaging import version
 from decimal import Decimal
 from django.utils import timezone
-from django_scopes import scopes_disabled
 
 from pretix.base.models import (
     Event,
@@ -15,6 +13,9 @@ from pretix.base.models import (
     OrderPayment,
     Order,
     OrderPosition,
+)
+from pytest_django.fixtures import (
+    _disable_native_migrations,
 )
 
 from django.test import utils
@@ -133,10 +134,47 @@ def order_position(django_db_reset_sequences, ticket, get_order_and_payment, get
         return order_position
 
 
-@pytest.hookimpl(hookwrapper=True)
-def pytest_fixture_setup(fixturedef, request):
-    if inspect.isgeneratorfunction(fixturedef.func):
-        yield
-    else:
-        with scopes_disabled():
-            yield
+@pytest.fixture(scope="function")
+def django_db_setup(
+    request,
+    django_test_environment,
+    django_db_blocker,
+    django_db_use_migrations,
+    django_db_keepdb,
+    django_db_createdb,
+    django_db_modify_db_settings,
+):
+    """
+    Copied and pasted from here:
+    https://github.com/pytest-dev/pytest-django/blob/d2973e21c34d843115acdbccdd7a16cb2714f4d3/pytest_django/fixtures.py#L84
+    """
+    from pytest_django.compat import setup_databases, teardown_databases
+
+    setup_databases_args = {}
+
+    if not django_db_use_migrations:
+        _disable_native_migrations()
+
+    if django_db_keepdb and not django_db_createdb:
+        setup_databases_args["keepdb"] = True
+
+    with django_db_blocker.unblock():
+        db_cfg = setup_databases(
+            verbosity=request.config.option.verbose,
+            interactive=False,
+            **setup_databases_args
+        )
+
+    def teardown_database():
+        with django_db_blocker.unblock():
+            try:
+                teardown_databases(db_cfg, verbosity=request.config.option.verbose)
+            except Exception as exc:
+                request.node.warn(
+                    pytest.PytestWarning(
+                        "Error when trying to teardown test databases: %r" % exc
+                    )
+                )
+
+    if not django_db_keepdb:
+        request.addfinalizer(teardown_database)
