@@ -14,9 +14,11 @@ from pretix.base.models import (
     Order,
     OrderPosition,
 )
-from pytest_django.fixtures import (
-    _disable_native_migrations,
-)
+
+from django.test import utils
+from django_scopes import scopes_disabled
+
+utils.setup_databases = scopes_disabled()(utils.setup_databases)
 
 from django.test import utils
 from django_scopes import scopes_disabled
@@ -28,7 +30,7 @@ utils.setup_databases = scopes_disabled()(utils.setup_databases)
 
 
 @pytest.fixture
-def organizer(django_db_reset_sequences):
+def organizer():
     return Organizer.objects.create(
         name='Ethereum Foundation',
         slug='ef',
@@ -36,7 +38,7 @@ def organizer(django_db_reset_sequences):
 
 
 @pytest.fixture
-def event(django_db_reset_sequences, organizer):
+def event(organizer):
     now = timezone.now()
 
     presale_start_at = now + datetime.timedelta(days=2)
@@ -82,7 +84,7 @@ def get_organizer_scope(organizer):
 
 
 @pytest.fixture
-def get_order_and_payment(django_db_reset_sequences, event, get_organizer_scope):
+def get_order_and_payment(event, get_organizer_scope):
     def _get_order_and_payment(order_kwargs=None, payment_kwargs=None, info_data=None):
         with get_organizer_scope():
             # Create order
@@ -119,7 +121,7 @@ def get_order_and_payment(django_db_reset_sequences, event, get_organizer_scope)
 
 
 @pytest.fixture
-def order_position(django_db_reset_sequences, ticket, get_order_and_payment, get_organizer_scope):
+def order_position(ticket, get_order_and_payment, get_organizer_scope):
     order, payment = get_order_and_payment()
 
     with get_organizer_scope():
@@ -132,49 +134,3 @@ def order_position(django_db_reset_sequences, ticket, get_order_and_payment, get
         )
 
         return order_position
-
-
-@pytest.fixture(scope="function")
-def django_db_setup(
-    request,
-    django_test_environment,
-    django_db_blocker,
-    django_db_use_migrations,
-    django_db_keepdb,
-    django_db_createdb,
-    django_db_modify_db_settings,
-):
-    """
-    Copied and pasted from here:
-    https://github.com/pytest-dev/pytest-django/blob/d2973e21c34d843115acdbccdd7a16cb2714f4d3/pytest_django/fixtures.py#L84
-    """
-    from pytest_django.compat import setup_databases, teardown_databases
-
-    setup_databases_args = {}
-
-    if not django_db_use_migrations:
-        _disable_native_migrations()
-
-    if django_db_keepdb and not django_db_createdb:
-        setup_databases_args["keepdb"] = True
-
-    with django_db_blocker.unblock():
-        db_cfg = setup_databases(
-            verbosity=request.config.option.verbose,
-            interactive=False,
-            **setup_databases_args
-        )
-
-    def teardown_database():
-        with django_db_blocker.unblock():
-            try:
-                teardown_databases(db_cfg, verbosity=request.config.option.verbose)
-            except Exception as exc:
-                request.node.warn(
-                    pytest.PytestWarning(
-                        "Error when trying to teardown test databases: %r" % exc
-                    )
-                )
-
-    if not django_db_keepdb:
-        request.addfinalizer(teardown_database)
