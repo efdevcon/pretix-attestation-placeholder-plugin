@@ -2,10 +2,12 @@ import pytest
 import datetime
 import contextlib
 import pretix
+import inspect
 
 from packaging import version
 from decimal import Decimal
 from django.utils import timezone
+from django_scopes import scopes_disabled
 
 from pretix.base.models import (
     Event,
@@ -129,3 +131,12 @@ def order_position(django_db_reset_sequences, ticket, get_order_and_payment, get
         )
 
         return order_position
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_fixture_setup(fixturedef, request):
+    if inspect.isgeneratorfunction(fixturedef.func):
+        yield
+    else:
+        with scopes_disabled():
+            yield
