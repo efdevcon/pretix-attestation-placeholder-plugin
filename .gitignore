@@ -68,4 +68,5 @@ data/
 .vscode
 
 # Keyfile directory
-pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles/**
+pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles/*
+!/**/.gitkeep
