@@ -3,7 +3,6 @@ import pytest
 from pretix_attestation_plugin.email import OrderAttestationPlaceholder
 
 
-@pytest.mark.django_db
 def test_link_successfuly_generated(order_position):
 
     link = OrderAttestationPlaceholder.generate_link(
@@ -16,7 +15,6 @@ def test_link_successfuly_generated(order_position):
     assert link.startswith('?ticket=')
 
 
-@pytest.mark.django_db
 def test_invalid_path_to_key(order_position):
     invalid_path = 'key.pem'
 
@@ -30,7 +28,6 @@ def test_invalid_path_to_key(order_position):
         )
 
 
-@pytest.mark.django_db
 def test_invalid_path_to_generator(order_position):
     invalid_path = 'generator.jar'
 

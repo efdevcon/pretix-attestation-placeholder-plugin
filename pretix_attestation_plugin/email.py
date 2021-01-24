@@ -22,11 +22,11 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
 
     @staticmethod
     def generate_link(email: str,
-                       event_id: str,
-                       ticket_id: str,
-                       path_to_key='pretix_attestation_plugin/generator/key.pem',
-                       path_to_generator='pretix_attestation_plugin/generator/attestation-all.jar',
-                       ticket_staus='1') -> str:
+                      event_id: str,
+                      ticket_id: str,
+                      path_to_key='pretix_attestation_plugin/generator/key.pem',
+                      path_to_generator='pretix_attestation_plugin/generator/attestation-all.jar',
+                      ticket_staus='1') -> str:
         from subprocess import (
             Popen,
             PIPE
