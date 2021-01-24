@@ -28,7 +28,7 @@ utils.setup_databases = scopes_disabled()(utils.setup_databases)
 
 
 @pytest.fixture
-def organizer():
+def organizer(django_db_reset_sequences):
     return Organizer.objects.create(
         name='Ethereum Foundation',
         slug='ef',
@@ -36,7 +36,7 @@ def organizer():
 
 
 @pytest.fixture
-def event(organizer):
+def event(django_db_reset_sequences, organizer):
     now = timezone.now()
 
     presale_start_at = now + datetime.timedelta(days=2)
