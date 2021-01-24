@@ -12,8 +12,7 @@ from pretix.control.views.event import EventSettingsViewMixin
 from . import forms
 
 
-UPLOAD_ADDRESS_KEY = "pretix_eth_upload_addresses"
-UPLOAD_VALID_DURATION = timedelta(minutes=5)
+KEYFILE_DIR = "pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles"
 
 
 class KeyFileUploadView(EventSettingsViewMixin, FormView):
@@ -24,13 +23,25 @@ class KeyFileUploadView(EventSettingsViewMixin, FormView):
     def form_valid(self, form):
         raw_data, num_bits = form.cleaned_data["key_file_data"]
 
+        file_name = "{dir}/{event}_key.pem".format(
+            dir = KEYFILE_DIR,
+            event = self.request.event
+        )
+
+        try:
+            with open(file_name, 'wb') as f:
+                f.write(raw_data)
+        except EnvironmentError:
+            messages.error(self.request, _('We could not save your changes. Unable to save the file'))
+            return super().form_valid(form)
+
         messages.success(
             self.request,
             _(
                 'Successfully uploaded .pem file. '
                 'Public key is {n} bits'
             ).format(
-                n=num_bits,
+                n=num_bits
             ),
         )
 
