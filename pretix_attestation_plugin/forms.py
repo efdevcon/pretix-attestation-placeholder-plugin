@@ -1,4 +1,5 @@
 import re
+
 from OpenSSL import crypto
 
 from django import forms
@@ -22,12 +23,12 @@ class KeyPemFile(ExtFileField):
             raw_data = data.read()
             try:
                 pubkey = crypto.load_privatekey(crypto.FILETYPE_PEM, raw_data)
-            except:
+            except crypto.Error:
                 raise forms.ValidationError(_("Unable to load private key"))
-            
+
             if(pubkey.bits() == 0):
                 raise forms.ValidationError(_("Key is 0 bits"))
-            
+
             return raw_data, pubkey.bits()
 
 

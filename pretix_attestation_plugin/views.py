@@ -1,10 +1,5 @@
-from datetime import timedelta
-
 from django.contrib import messages
-from django.contrib.humanize.templatetags.humanize import NaturalTimeFormatter
-from django.core.signing import BadSignature, TimestampSigner
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import FormView
 from pretix.control.views.event import EventSettingsViewMixin
@@ -24,8 +19,8 @@ class KeyFileUploadView(EventSettingsViewMixin, FormView):
         raw_data, num_bits = form.cleaned_data["key_file_data"]
 
         file_name = "{dir}/{event}_key.pem".format(
-            dir = KEYFILE_DIR,
-            event = self.request.event
+            dir=KEYFILE_DIR,
+            event=self.request.event
         )
 
         try:
