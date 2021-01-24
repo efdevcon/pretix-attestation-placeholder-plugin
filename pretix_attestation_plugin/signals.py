@@ -4,7 +4,6 @@ from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 
 from pretix.base.signals import register_mail_placeholders
-from pretix.base.email import SimpleFunctionalMailTextPlaceholder
 from pretix.control.signals import nav_event_settings
 
 
