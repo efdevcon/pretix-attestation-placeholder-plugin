@@ -3,7 +3,7 @@ from pretix.base.email import BaseMailTextPlaceholder
 
 class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
     def __init__(self):
-        self._identifier = "order_attestation_link"
+        self._identifier = "attestation_link"
 
     @property
     def identifier(self):
