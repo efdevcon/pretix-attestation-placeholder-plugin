@@ -34,5 +34,6 @@ class KeyPemFile(ExtFileField):
 
 class KeyFileUploadForm(forms.Form):
     key_file_data = KeyPemFile(
-        help_text=_("Upload a '.pem' key file holding a key in RFC 5915 format "),
+        help_text=_("""Upload a '.pem' key file holding a key in RFC 5915 format. <br>
+            You can generate it like this: <strong>openssl ecparam -name secp256k1 -genkey -noout -out key.pem</strong>"""),
     )
