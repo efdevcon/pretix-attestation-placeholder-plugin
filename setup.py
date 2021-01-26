@@ -56,10 +56,7 @@ setup(
         "pretix>=3.8.0",
         "urllib3<1.26.0",
     ],
-<<<<<<< HEAD
     python_requires='>=3.6, <4',
-=======
->>>>>>> 70731c6... implements wrapper for java link generator && tests
     extras_require=extras_require,
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
