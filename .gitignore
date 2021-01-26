@@ -73,4 +73,4 @@ pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles/*
 !/**/.gitkeep
 
 # OS generated files
-.DS_Store
+*.DS_Store

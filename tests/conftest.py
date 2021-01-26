@@ -25,14 +25,6 @@ from django_scopes import scopes_disabled
 
 utils.setup_databases = scopes_disabled()(utils.setup_databases)
 
-from django.test import utils
-from django_scopes import scopes_disabled
-
-# Disabled scope for databases, otherwise django_scopes breaks
-# Django test runner
-# Source: https://github.com/raphaelm/django-scopes#testing
-utils.setup_databases = scopes_disabled()(utils.setup_databases)
-
 
 @pytest.fixture
 def organizer():
