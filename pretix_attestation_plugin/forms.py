@@ -4,6 +4,8 @@ from OpenSSL import crypto
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from pretix.control.forms import ExtFileField
 
 
@@ -32,8 +34,35 @@ class KeyPemFile(ExtFileField):
             return raw_data, pubkey.bits()
 
 
-class KeyFileUploadForm(forms.Form):
+class BaseURLField(forms.CharField):
+    def clean(self, *args, **kwargs):
+        data = super().clean(*args, **kwargs)
+
+        if(data):
+            validate = URLValidator()
+
+            try:
+                validate(data)
+            except ValidationError:
+                raise forms.ValidationError(_("String is not a valid URL"))
+
+            return data
+
+
+class PluginSettingsForm(forms.Form):
+    def __init__(self, current_base_url="None", *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["base_url"] = BaseURLField(
+            label=_('Base URL'),
+            help_text=_("Type in a Base URL address. Current url: {url}").format(
+                url=str(current_base_url)
+            ),
+            required=False,
+        )
+
     key_file_data = KeyPemFile(
         help_text=_("""Upload a '.pem' key file holding a key in RFC 5915 format. <br>
             You can generate it like this: <strong>openssl ecparam -name secp256k1 -genkey -noout -out key.pem</strong>"""),
+        required=False,
     )
