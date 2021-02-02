@@ -17,13 +17,13 @@ def register_mail_renderers(sender, **kwargs):
 def navbar_key_file_upload(sender, request, **kwargs):
     url = resolve(request.path_info)
     return [{
-        'label': _('Key file upload'),
-        'url': reverse('plugins:pretix_attestation_plugin:key_file_upload', kwargs={
+        'label': _('Attestation Plugin Settings'),
+        'url': reverse('plugins:pretix_attestation_plugin:attestation_plugin_settings', kwargs={
             'event': request.event.slug,
             'organizer': request.organizer.slug,
         }),
         'active': (
             url.namespace == 'plugins:pretix_attestation_plugin'
-            and url.url_name == 'key_file_upload'
+            and url.url_name == 'attestation_plugin_settings'
         ),
     }]
