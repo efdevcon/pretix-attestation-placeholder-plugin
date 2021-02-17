@@ -1,5 +1,7 @@
 from pretix.base.email import BaseMailTextPlaceholder
 
+from .models import AttestationLink
+
 
 class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
     def __init__(self):
@@ -11,11 +13,11 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
 
     @property
     def required_context(self):
-        return ['event']
+        return ['event', 'position']
 
     def render(self, context):
         # Change to attestation link
-        return "This is Link"
+        return str(AttestationLink.objects.get(order_position=context.position).string_url)
 
     def render_sample(self, event):
         return "http://localhost/?ticket=MIGZMAoCAQYCAgTRA…"
