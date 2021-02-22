@@ -9,8 +9,9 @@ from pretix.base.signals import (
 )
 from pretix.control.signals import nav_event_settings
 
-from .models import OrderPosition
+from .models import AttestationLink
 from .views import KEYFILE_DIR
+
 
 @receiver(register_mail_placeholders, dispatch_uid="placeholder_custom")
 def register_mail_renderers(sender, **kwargs):
@@ -46,12 +47,13 @@ def register_order_placed(order, sender, ** kwargs):
         # TODO call generate_link(OrderPosition, path_to_key)
 
         # Temporary link
-        link = "{path}/temp_link".format(
+        link = "{path}/temp_link/{tid}".format(
             path=path_to_key,
+            tid=str(position.item.id),
         )
 
         # Save the link to DB
-        OrderPosition.objects.update_or_create(
+        AttestationLink.objects.update_or_create(
             order_position=position,
             defaults={"string_url": link},
         )

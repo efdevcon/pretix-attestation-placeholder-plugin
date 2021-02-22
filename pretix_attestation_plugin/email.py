@@ -13,11 +13,19 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
 
     @property
     def required_context(self):
-        return ['event', 'position']
+        return ['event', 'order']
 
     def render(self, context):
         # Change to attestation link
-        return str(AttestationLink.objects.get(order_position=context.position).string_url)
+        attestation_link = ""
+        for position in context["order"].positions.all():
+            try:
+                attestation_link += str(AttestationLink.objects.get(order_position=position).string_url) + "\n"
+            except AttestationLink.DoesNotExist:
+                attestation_link = "Attestation link does not exist. Please contact the organizers"
+                break
+
+        return attestation_link
 
     def render_sample(self, event):
         return "http://localhost/?ticket=MIGZMAoCAQYCAgTRA…"
