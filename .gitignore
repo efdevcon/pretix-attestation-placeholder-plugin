@@ -24,6 +24,7 @@ var/
 .installed.cfg
 *.egg
 .ropeproject/
+.python-version
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -70,3 +71,6 @@ data/
 # Keyfile directory
 pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles/*
 !/**/.gitkeep
+
+# OS generated files
+*.DS_Store
