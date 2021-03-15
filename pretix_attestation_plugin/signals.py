@@ -9,6 +9,7 @@ from pretix.base.signals import (
 )
 from pretix.control.signals import nav_event_settings
 
+from .generator.java_generator_wrapper import generate_link
 from .models import AttestationLink
 from .views import KEYFILE_DIR
 
@@ -44,13 +45,8 @@ def register_order_placed(order, sender, ** kwargs):
     )
 
     for position in order.positions.all():
-        # TODO call generate_link(OrderPosition, path_to_key)
-
-        # Temporary link
-        link = "{path}/temp_link/{tid}".format(
-            path=path_to_key,
-            tid=str(position.item.id),
-        )
+        # generated link
+        link = generate_link(position, path_to_key)
 
         # Save the link to DB
         AttestationLink.objects.update_or_create(

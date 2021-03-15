@@ -23,7 +23,7 @@ def generate_link(order_position: OrderPosition,
     if not os.path.isfile(path_to_generator):
         raise ValueError(f'Generator file not found in {path_to_generator}')
 
-    email = order_position.attendee_email
+    email = order_position.order.email
     event_id = str(order_position.order.event.id)
     ticket_id = str(order_position.item.id)
 
