@@ -2,6 +2,7 @@
 from django.dispatch import receiver
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
+import logging
 
 from pretix.base.signals import (
     order_placed,
@@ -12,6 +13,9 @@ from pretix.control.signals import nav_event_settings
 from .generator.java_generator_wrapper import generate_link
 from .models import AttestationLink
 from .views import KEYFILE_DIR
+
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(register_mail_placeholders, dispatch_uid="placeholder_custom")
@@ -46,8 +50,11 @@ def register_order_placed(order, sender, ** kwargs):
 
     for position in order.positions.all():
         # generated link
-        link = generate_link(position, path_to_key)
-
+        try:
+            link = generate_link(position, path_to_key)
+        except ValueError as error:
+            logger.error(error)
+            continue
         # Save the link to DB
         AttestationLink.objects.update_or_create(
             order_position=position,

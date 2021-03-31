@@ -17,7 +17,7 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
 
     @property
     def required_context(self):
-        return ['event', 'order']
+        return ['event', 'position']
 
     def render(self, context):
         # Change to attestation link
@@ -26,19 +26,17 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
         try:
             base_url = BaseURL.objects.get(event=context["event"]).string_url
         except BaseURL.DoesNotExist:
-            attestation_text = _("Attestation links does not exist. Please contact the organizers")
+            attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
             return attestation_text
 
-        for position in context["order"].positions.all():
-            try:
-                attestation_text += _("Ticket #{id} : {base_url}{link} \n").format(
-                    id=position.positionid,
-                    base_url=base_url,
-                    link=str(AttestationLink.objects.get(order_position=position).string_url)
-                )
-            except AttestationLink.DoesNotExist:
-                attestation_text = _("Attestation links does not exist. Please contact the organizers")
-                break
+        position = context["position"]
+        try:
+            attestation_text = "{base_url}{link}".format(
+                base_url=base_url,
+                link=str(AttestationLink.objects.get(order_position=position).string_url)
+            )
+        except AttestationLink.DoesNotExist:
+            attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
 
         return attestation_text
 
