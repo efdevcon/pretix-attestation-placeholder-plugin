@@ -20,8 +20,8 @@ logger = logging.getLogger(__name__)
 
 @receiver(register_mail_placeholders, dispatch_uid="placeholder_custom")
 def register_mail_renderers(sender, **kwargs):
-    from .email import OrderAttestationPlaceholder
-    return OrderAttestationPlaceholder()
+    from .email import OrderAttestationPlaceholder, PositionAttestationPlaceholder
+    return [OrderAttestationPlaceholder(), PositionAttestationPlaceholder()]
 
 
 @receiver(nav_event_settings, dispatch_uid='attestation_nav_key_file_upload')
