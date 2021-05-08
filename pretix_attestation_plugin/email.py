@@ -39,7 +39,7 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
                         link=str(AttestationLink.objects.get(order_position=position).string_url)
                     )
                 except AttestationLink.DoesNotExist:
-                    attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")        
+                    attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
 
         return attestation_text
 
