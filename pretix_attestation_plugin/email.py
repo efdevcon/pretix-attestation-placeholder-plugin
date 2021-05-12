@@ -17,6 +17,46 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
 
     @property
     def required_context(self):
+        return ['event', 'order']
+
+    def render(self, context):
+        # Change to attestation link
+        attestation_text = ""
+        base_url = ""
+        try:
+            base_url = BaseURL.objects.get(event=context["event"]).string_url
+        except BaseURL.DoesNotExist:
+            attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
+            return attestation_text
+
+        order = context['order']
+
+        for position in order.positions.all():
+            if position.attendee_email == order.email:
+                try:
+                    attestation_text = "{base_url}{link}".format(
+                        base_url=base_url,
+                        link=str(AttestationLink.objects.get(order_position=position).string_url)
+                    )
+                except AttestationLink.DoesNotExist:
+                    attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
+
+        return attestation_text
+
+    def render_sample(self, event):
+        return "http://localhost/?ticket=MIGZMAoCAQYCAgTRA…"
+
+
+class PositionAttestationPlaceholder(BaseMailTextPlaceholder):
+    def __init__(self):
+        self._identifier = "attestation_link"
+
+    @property
+    def identifier(self):
+        return self._identifier
+
+    @property
+    def required_context(self):
         return ['event', 'position']
 
     def render(self, context):
