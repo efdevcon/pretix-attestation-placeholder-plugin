@@ -11,8 +11,10 @@ from pretix.base.signals import (
 from pretix.control.signals import nav_event_settings
 
 from .generator.java_generator_wrapper import generate_link
-from .models import AttestationLink
-from .views import KEYFILE_DIR
+from .models import (
+    AttestationLink,
+    KeyFile,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -42,11 +44,11 @@ def navbar_key_file_upload(sender, request, **kwargs):
 
 @receiver(order_placed, dispatch_uid='attestation_order_placed')
 def register_order_placed(order, sender, ** kwargs):
-
-    path_to_key = "{dir}/{event}_key.pem".format(
-        dir=KEYFILE_DIR,
-        event=str(order.event),
-    )
+    try:
+        path_to_key = KeyFile.objects.get(event=order.event).upload.path
+    except KeyFile.DoesNotExist as error:
+        logger.error(error)
+        return
 
     for position in order.positions.all():
         # generated link
