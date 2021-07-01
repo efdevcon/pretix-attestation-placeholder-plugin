@@ -21,18 +21,20 @@ class PluginSettingsView(EventSettingsViewMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        self.write_to_file(self.request.FILES.get('keyfile', None))
+        self.write_to_file(form.cleaned_data["keyfile"])
         self.save_base_url(form.cleaned_data["base_url"])
         return super().form_valid(form)
 
-    def write_to_file(self, uploaded_file):
-        if(uploaded_file is None):
+    def write_to_file(self, cleaned_data):
+        if(cleaned_data is None):
             return
+
+        upload_data, num_bits = cleaned_data
 
         try:
             models.KeyFile.objects.update_or_create(
                 event=self.request.event,
-                defaults={"upload": uploaded_file}
+                defaults={"upload": upload_data}
             )
         except EnvironmentError:
             messages.error(self.request, _('We could not save your changes: Unable to save the file'))
@@ -42,7 +44,10 @@ class PluginSettingsView(EventSettingsViewMixin, FormView):
             self.request,
             _(
                 'Successfully uploaded .pem file. '
-            )
+                'Number of bits {num_bits}'
+            ).format(
+                num_bits=num_bits
+            ),
         )
 
     def save_base_url(self, base_url):

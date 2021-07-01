@@ -31,7 +31,7 @@ class KeyPemFile(ExtFileField):
             if(pubkey.bits() == 0):
                 raise forms.ValidationError(_("Key is 0 bits"))
 
-            return raw_data, pubkey.bits()
+            return data, pubkey.bits()
 
 
 class BaseURLField(forms.CharField):
