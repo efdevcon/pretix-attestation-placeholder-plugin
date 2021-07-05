@@ -1,3 +1,4 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import (
     models,
 )
@@ -28,6 +29,19 @@ class AttestationLink(models.Model):
 
     order_position = models.OneToOneField(
         OrderPosition,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+
+
+class KeyFile(models.Model):
+    """
+    Represents a key file uploaded by an user, that will be used to generate an attestation link
+    """
+    upload = models.FileField(upload_to='pretix_attestation_plugin/keyfiles/', storage=FileSystemStorage())
+
+    event = models.OneToOneField(
+        Event,
         on_delete=models.CASCADE,
         primary_key=True
     )

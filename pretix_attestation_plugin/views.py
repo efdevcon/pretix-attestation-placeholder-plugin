@@ -7,9 +7,6 @@ from pretix.control.views.event import EventSettingsViewMixin
 from . import forms, models
 
 
-KEYFILE_DIR = "pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles"
-
-
 class PluginSettingsView(EventSettingsViewMixin, FormView):
     form_class = forms.PluginSettingsForm
     template_name = 'pretix_attestation_plugin/attestation_plugin_settings.html'
@@ -24,7 +21,7 @@ class PluginSettingsView(EventSettingsViewMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        self.write_to_file(form.cleaned_data["key_file_data"])
+        self.write_to_file(form.cleaned_data["keyfile"])
         self.save_base_url(form.cleaned_data["base_url"])
         return super().form_valid(form)
 
@@ -32,16 +29,13 @@ class PluginSettingsView(EventSettingsViewMixin, FormView):
         if(cleaned_data is None):
             return
 
-        raw_data, num_bits = cleaned_data
-
-        file_name = "{dir}/{event}_key.pem".format(
-            dir=KEYFILE_DIR,
-            event=self.request.event
-        )
+        upload_data, num_bits = cleaned_data
 
         try:
-            with open(file_name, 'wb') as f:
-                f.write(raw_data)
+            models.KeyFile.objects.update_or_create(
+                event=self.request.event,
+                defaults={"upload": upload_data}
+            )
         except EnvironmentError:
             messages.error(self.request, _('We could not save your changes: Unable to save the file'))
             return
@@ -50,9 +44,9 @@ class PluginSettingsView(EventSettingsViewMixin, FormView):
             self.request,
             _(
                 'Successfully uploaded .pem file. '
-                'Public key is {n} bits'
+                'Number of bits {num_bits}'
             ).format(
-                n=num_bits
+                num_bits=num_bits
             ),
         )
 
