@@ -1,26 +1,30 @@
+from os import path
+from subprocess import Popen, PIPE
+
 from pretix.base.models import OrderPosition
 
-# Here key indicates .pem file in RFC 5915 format. Before using this generator, key needs
-# to be uploaded through form.
-# Currently, uploaded keys are stored in KEYFILE_DIR variable specified in views.py. Now
-# the directory is "pretix_attestation_plugin/static/pretix_attestation_plugin/keyfiles"
+"""
+A key indicates .pem file in RFC 5915 format.
 
+Before using this generator, key needs to be uploaded through form.
+`Attestation Plugin Settings` can be used for that.
+"""
 
 def generate_link(order_position: OrderPosition,
                   path_to_key: str,
-                  path_to_generator: str = 'pretix_attestation_plugin/generator/attestation-all.jar',
+                  generator_jar: str = 'attestation-all.jar',
                   ticket_staus: str = '1') -> str:
-    from subprocess import (
-        Popen,
-        PIPE
-    )
 
-    import os.path
-
-    if not os.path.isfile(path_to_key):
+    if not path.isfile(path_to_key):
         raise ValueError(f'Key file not found in {path_to_key}')
 
-    if not os.path.isfile(path_to_generator):
+    # either generator_jar is the full path to the java file or it sits next to the python file
+    if path.isfile(generator_jar):
+        path_to_generator = path.abspath(generator_jar)
+    else:
+        this_module_path = path.dirname(path.abspath(__file__))
+        path_to_generator = path.join(this_module_path, generator_jar)
+    if not path.isfile(path_to_generator):
         raise ValueError(f'Generator file not found in {path_to_generator}')
 
     email = order_position.attendee_email
