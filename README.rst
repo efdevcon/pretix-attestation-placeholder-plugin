@@ -1,5 +1,5 @@
-# Pretix Attestation Placeholder Plugin
-==========================
+Pretix Attestation Placeholder Plugin
+=====================================
 
 This is a plugin for `pretix`_. 
 
@@ -25,11 +25,9 @@ Development setup
 License
 -------
 
-
 Copyright 2021 Pretix Ethereum Plugin Developers
 
 Released under the terms of the MIT License
-
 
 
 .. _pretix: https://github.com/pretix/pretix
