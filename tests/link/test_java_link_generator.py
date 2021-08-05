@@ -36,5 +36,5 @@ def test_invalid_path_to_generator(order_position):
         generate_link(
             order_position=order_position,
             path_to_key='tests/key.pem',
-            path_to_generator=invalid_path
+            generator_jar=invalid_path
         )
