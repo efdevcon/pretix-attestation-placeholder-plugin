@@ -10,6 +10,7 @@ Before using this generator, key needs to be uploaded through form.
 `Attestation Plugin Settings` can be used for that.
 """
 
+
 def generate_link(order_position: OrderPosition,
                   path_to_key: str,
                   generator_jar: str = 'attestation-all.jar',
