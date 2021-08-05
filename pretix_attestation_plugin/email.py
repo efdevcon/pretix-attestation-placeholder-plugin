@@ -6,6 +6,11 @@ from .models import (
     BaseURL,
 )
 
+"""
+We need to register two email placeholders under the same name,
+the proper one is picked based on the different context.
+"""
+
 
 class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
     def __init__(self):
