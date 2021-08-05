@@ -26,7 +26,7 @@ def generate_link(order_position: OrderPosition,
         this_module_path = path.dirname(path.abspath(__file__))
         path_to_generator = path.join(this_module_path, generator_jar)
     if not path.isfile(path_to_generator):
-        raise ValueError(f'Generator file not found in {path_to_generator}')
+        raise ValueError(f'Generator file not found in {generator_jar}')
 
     email = order_position.attendee_email
     event_id = str(order_position.order.event.id)
