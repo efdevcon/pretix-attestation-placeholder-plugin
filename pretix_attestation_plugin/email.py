@@ -1,9 +1,12 @@
 from pretix.base.email import BaseMailTextPlaceholder
 from django.utils.translation import gettext_lazy as _
 
+from .generator.java_generator_wrapper import generate_link
+
 from .models import (
     AttestationLink,
     BaseURL,
+    KeyFile,
 )
 
 """
@@ -36,8 +39,24 @@ class OrderAttestationPlaceholder(BaseMailTextPlaceholder):
 
         order = context['order']
 
+        try:
+            path_to_key = KeyFile.objects.get(event=order.event).upload.path
+        except KeyFile.DoesNotExist:
+            attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
+            return attestation_text
+
         for position in order.positions.all():
             if position.attendee_email == order.email:
+                if not AttestationLink.objects.filter(order_position=position).exists():
+                    try:
+                        link = generate_link(position, path_to_key)
+                    except ValueError:
+                        attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
+                        continue
+                    AttestationLink.objects.update_or_create(
+                        order_position=position,
+                        defaults={"string_url": link},
+                    )
                 try:
                     attestation_text = "{base_url}{link}".format(
                         base_url=base_url,
@@ -75,6 +94,25 @@ class PositionAttestationPlaceholder(BaseMailTextPlaceholder):
             return attestation_text
 
         position = context["position"]
+        event = context["event"]
+        
+        try:
+            path_to_key = KeyFile.objects.get(event=event).upload.path
+        except KeyFile.DoesNotExist:
+            attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
+            return attestation_text
+
+        if not AttestationLink.objects.filter(order_position=position).exists():
+            try:
+                link = generate_link(position, path_to_key)
+            except ValueError:
+                attestation_text = _("Could not generate attestation URL - please contact support@devcon.org")
+                return attestation_text
+            AttestationLink.objects.update_or_create(
+                order_position=position,
+                defaults={"string_url": link},
+            )
+
         try:
             attestation_text = "{base_url}{link}".format(
                 base_url=base_url,
