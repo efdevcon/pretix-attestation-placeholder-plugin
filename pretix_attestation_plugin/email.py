@@ -95,7 +95,7 @@ class PositionAttestationPlaceholder(BaseMailTextPlaceholder):
 
         position = context["position"]
         event = context["event"]
-        
+
         try:
             path_to_key = KeyFile.objects.get(event=event).upload.path
         except KeyFile.DoesNotExist:
