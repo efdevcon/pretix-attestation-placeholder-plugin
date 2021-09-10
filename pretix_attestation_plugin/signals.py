@@ -5,16 +5,9 @@ from django.utils.translation import gettext_lazy as _
 import logging
 
 from pretix.base.signals import (
-    order_placed,
     register_mail_placeholders,
 )
 from pretix.control.signals import nav_event_settings
-
-from .generator.java_generator_wrapper import generate_link
-from .models import (
-    AttestationLink,
-    KeyFile,
-)
 
 
 logger = logging.getLogger(__name__)
@@ -40,25 +33,3 @@ def navbar_key_file_upload(sender, request, **kwargs):
             and url.url_name == 'attestation_plugin_settings'
         ),
     }]
-
-
-@receiver(order_placed, dispatch_uid='attestation_order_placed')
-def register_order_placed(order, sender, ** kwargs):
-    try:
-        path_to_key = KeyFile.objects.get(event=order.event).upload.path
-    except KeyFile.DoesNotExist as error:
-        logger.error(error)
-        return
-
-    for position in order.positions.all():
-        # generated link
-        try:
-            link = generate_link(position, path_to_key)
-        except ValueError as error:
-            logger.error(error)
-            continue
-        # Save the link to DB
-        AttestationLink.objects.update_or_create(
-            order_position=position,
-            defaults={"string_url": link},
-        )
