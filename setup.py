@@ -44,7 +44,7 @@ extras_require['dev'] = (
 
 setup(
     name='pretix-attestation-placeholder-plugin',
-    version='0.1.8',
+    version='0.1.9',
     description='Pretix Ethereum Plugin Developers',
     long_description=long_description,
     url='https://github.com/efdevcon/pretix-attestation-placeholder-plugin',
