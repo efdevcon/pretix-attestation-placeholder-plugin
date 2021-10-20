@@ -30,7 +30,7 @@ def generate_link(order_position: OrderPosition,
 
     email = order_position.attendee_email
     event_id = str(order_position.order.event.id)
-    ticket_id = str(order_position.item.id)
+    ticket_id = str(order_position.order.id)
 
     process = Popen(['java', '-cp', path_to_generator,
                      'org.devcon.ticket.Issuer',
