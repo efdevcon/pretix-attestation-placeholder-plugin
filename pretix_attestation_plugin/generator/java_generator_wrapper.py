@@ -14,7 +14,7 @@ Before using this generator, key needs to be uploaded through form.
 def generate_link(order_position: OrderPosition,
                   path_to_key: str,
                   generator_jar: str = 'attestation-all.jar',
-                  ticket_staus: str = '1') -> str:
+                  ticket_status: str = '1') -> str:
 
     if not path.isfile(path_to_key):
         raise ValueError(f'Key file not found in {path_to_key}')
@@ -29,12 +29,15 @@ def generate_link(order_position: OrderPosition,
         raise ValueError(f'Generator file not found in {generator_jar}')
 
     email = order_position.attendee_email
-    event_id = str(order_position.order.event.id)
-    ticket_id = str(order_position.order.id)
+    event_id = order_position.order.event.id
+    # the Java code is accepting only BigInt, so we need to convert a string ID to a number
+    pseudonymization_id = order_position.pseudonymization_id
+    ticket_id = sum(ord(c) << 8 * i for i, c in enumerate(pseudonymization_id))
 
     process = Popen(['java', '-cp', path_to_generator,
                      'org.devcon.ticket.Issuer',
-                     path_to_key, email, event_id, ticket_id, ticket_staus],
+                     path_to_key, email,
+                     str(event_id), str(ticket_id), ticket_status],
                     stdout=PIPE, stderr=PIPE)
 
     process.wait()
