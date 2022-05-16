@@ -5,7 +5,7 @@ try:
 except ImportError:
     raise RuntimeError("Please use pretix 2.7 or above to run this plugin!")
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 class PluginApp(PluginConfig):
