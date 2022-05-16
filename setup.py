@@ -26,6 +26,8 @@ extras_require = {
     'test': [
         'pytest>=5.1,<6',
         'pytest-django>=3.5,<4',
+        'django_mysql<4.6.0',  # 4.6.0 got incompatible as they removed
+                               # a function in https://github.com/adamchainz/django-mysql/commit/40da1f9de6571bf8aef6b99841e7d21bcd53d5b7
     ],
     'lint': [
         'flake8>=3.7,<4',
